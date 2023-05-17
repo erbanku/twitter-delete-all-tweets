@@ -1,0 +1,26 @@
+name: tweet-delete@erbanku
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 16 * * 0" # Every Sunday 16PM (UTC)
+jobs:
+  tweet-delete:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Download ruby "3.2.0"
+        uses: ruby/setup-ruby@v1.133.0
+        with:
+          ruby-version: "3.2.0"
+      - name: Install twurl
+        run: gem install twurl
+      - name: Run pre-flight-checks.sh
+        run: /bin/bash pre-flight-checks.sh
+      - name: Run tweet-delete.sh
+        env:
+          twitter_user: ${{secrets.twitter_user}}
+          twitter_consumer_api_key: ${{secrets.twitter_consumer_api_key}}
+          twitter_consumer_api_secret_key: ${{secrets.twitter_consumer_api_secret_key}}
+          twitter_access_token: ${{ secrets.twitter_access_token}}
+          twitter_access_token_secret: ${{secrets.twitter_access_token_secret}}
+        run: /bin/bash tweet-delete.sh
